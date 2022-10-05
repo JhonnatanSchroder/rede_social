@@ -1,6 +1,8 @@
 <?php
 namespace src\helpers;
 use \src\models\User;
+use \src\models\UserRelations;
+use \src\helpers\PostHandler;
 
 class UserHandler {
     
@@ -48,7 +50,7 @@ class UserHandler {
         return $User ? true : false;
     }
 
-    public function getUser($id) {
+    public function getUser($id, $full = false) {
         $data = User::select()->where('id', $id)->one();
 
         if($data) {
@@ -60,6 +62,44 @@ class UserHandler {
             $user->work = $data['work'];
             $user->avatar = $data['avatar'];
             $user->cover = $data['cover'];
+
+            if($full) {
+                $user->followers = [];
+                $user->following = [];
+                $user->photos = [];
+
+
+                //followers
+                $followers = UserRelations::select()->where('user_to', $id)->get();
+                foreach($followers as $follower) {
+                    $userData = User::select()->where('id',$follower['user_from'])->one();
+                    $newUser = new User();
+                    $newUser->id = $userData['id'];
+                    $newUser->name = $userData['name'];
+                    $newUser->avatar = $userData['avatar'];
+
+                    $user->followers[] = $newUser;
+
+                }
+
+                //following
+                $followings = UserRelations::select()->where('user_from', $id)->get();
+                foreach($followings as $following) {
+                    $userData = User::select()->where('id',$following['user_to'])->one();
+                    $newUser = new User();
+                    $newUser->id = $userData['id'];
+                    $newUser->name = $userData['name'];
+                    $newUser->avatar = $userData['avatar'];
+
+                    $user->following[] = $newUser;
+
+                }
+
+                //photos
+
+                $user->photos = PostHandler::getPhotosFrom($id);
+                
+            }
 
             return $user;
         }
@@ -80,5 +120,18 @@ class UserHandler {
         ])->execute();
 
         return $token;
+    }
+
+    public static function isFollowing($from, $to) {
+        $data = UserRelations::select()
+            ->where('user_from', $from)
+            ->where('user_to', $to)
+        ->one();
+
+        if($data) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -48,7 +48,6 @@
                 </div>
                 <input type="text" class="fic-item-field" placeholder="Escreva um comentário" />
             </div>
-
         </div>
     </div>
 </div>

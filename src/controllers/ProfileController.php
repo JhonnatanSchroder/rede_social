@@ -16,21 +16,37 @@ class ProfileController extends Controller {
     }
 
     public function index($atts = []) {
+        $page = intval(filter_input(INPUT_GET, 'page'));
+
         $id = $this->loggedUser->id;
 
         if(!empty($atts['id'])) {
             $id = $atts['id'];
         }
 
-        $user = UserHandler::getUser($id);
+        $user = UserHandler::getUser($id, true);
 
         if(!$user) {
             $this->redirect('/');
         }
 
+        $dataFrom = new \DateTime($user->birthdate);
+        $dataTo = new \DateTime('today');
+        $user->ageYears = $dataFrom->diff($dataTo)->y;
+
+        $feed = PostHandler::getUserFeed($id, $page, $this->loggedUser->id);
+
+
+        $isFollowing = false;
+        if($user->id != $this->loggedUser->id) {
+            $isFollowing = UserHandler::isFollowing($this->loggedUser->id, $user->id);
+        }
+
        $this->render('profile', [
         'loggedUser' => $this->loggedUser,
-        'user' => $user
+        'user' => $user,
+        'feed' => $feed,
+        'isFollowing' => $isFollowing
        ]);
     }
 
