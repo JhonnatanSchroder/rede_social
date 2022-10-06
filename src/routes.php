@@ -22,7 +22,6 @@ $router->get('/perfil', 'ProfileController@index');
 $router->get('/amigos', 'ProfileController@friends');
 
 $router->get('/sair', 'LoginController@logout');
-$router->get('/teste', 'ProfileController@teste');
 
 // $router->get('/pesquisa');
 // $router->get('/sair');

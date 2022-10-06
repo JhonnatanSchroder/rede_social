@@ -52,10 +52,7 @@ class ProfileController extends Controller {
     }
 
     public function follow($atts) {
-        $to = intval($atts['id']);        
-
-        echo "$to and {$this->loggedUser->id}";
-        
+        $to = intval($atts['id']);                
         if(UserHandler::idExists($to)) {
             
             if(UserRelationsInsert::isFollowing($this->loggedUser->id, $to)) {
