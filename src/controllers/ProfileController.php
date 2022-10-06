@@ -59,11 +59,9 @@ class ProfileController extends Controller {
         if(UserHandler::idExists($to)) {
             
             if(UserRelationsInsert::isFollowing($this->loggedUser->id, $to)) {
-                echo 'entrei no if';
             
             UserRelationsInsert::unfollow($this->loggedUser->id, $to);
             } else {
-                echo 'entrei no else';
             UserRelationsInsert::follow($this->loggedUser->id, $to);
             }
         }
