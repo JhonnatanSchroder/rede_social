@@ -1,8 +1,10 @@
 <?php
 namespace src\helpers;
+use \core\Database;
 use \src\models\Post;
 use \src\models\User;
 use \src\models\UserRelations;
+
 
 class PostHandler {
     public static function addPost($idUser, $type, $body) {
@@ -51,9 +53,10 @@ class PostHandler {
     }
 
     public static function getHomeFeed($idUser, $page) {
+        $pdo = Database::getInstance();
         $perPage = 4;
 
-        $usersList = UserRelations::select()->where('user_from', $idUser)->get();
+        $usersList = $pdo->query("SELECT * FROM userrelations WHERE user_from = $idUser");
         $users = [];
         foreach($usersList as $userItem) {
             $users[] = $userItem['user_to'];

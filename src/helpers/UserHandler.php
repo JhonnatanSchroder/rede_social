@@ -134,4 +134,22 @@ class UserHandler {
 
         return false;
     }
+
+    public static function follow($from, $to) {
+        echo 'entrei  aqui '.$from.' '.$to;
+        UserRelations::insert([
+            'id' => null,
+            'user_from' => $from,
+            'user_to' => $to
+        ])->execute();
+        
+    }
+
+    public static function unfollow($from, $to) {
+        UserRelations::delete()
+            ->where('user_from', $from)
+            ->where('user_to', $to)
+        ->execute();
+    }
+
 }
