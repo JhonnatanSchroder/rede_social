@@ -72,4 +72,35 @@ class ProfileController extends Controller {
  
      }
 
+     public function friends($atts = []) {
+        $id = $this->loggedUser->id;
+        if(!empty($atts['id'])) {
+            $id = $atts['id'];
+        }
+
+        $user = UserRelationsInsert::getUser($id, true);
+        if(!$user) {
+            $this->redirect('/');
+        }
+
+        $dataFrom = new \DateTime($user->birthdate);
+        $dataTo = new \DateTime('today');
+        $user->ageYears = $dataFrom->diff($dataTo)->y;
+
+        $isFollowing = false;
+        if($user->id != $this->loggedUser->id) {
+            $isFollowing = UserRelationsInsert::isFollowing($this->loggedUser->id, $user->id);
+        }
+
+        $this->render('profile_friends', [
+            'loggedUser' => $this->loggedUser,
+            'user' => $user,
+            'isFollowing' => $isFollowing
+           ]);
+     }
+
+     public function teste() {
+        $this->render('amigos');
+     }
+
 }
