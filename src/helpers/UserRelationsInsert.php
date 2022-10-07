@@ -35,6 +35,18 @@ class UserRelationsInsert {
         return false;
     }
 
+    public static function emailExists($email) {
+        $pdo = Database::getInstance();
+        
+        $user = $pdo->query("SELECT * FROM `users` WHERE `email` = $email");
+        if($user) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
     public function getUser($id, $full = false) {
         $pdo = Database::getInstance();
 
@@ -45,6 +57,7 @@ class UserRelationsInsert {
             $user = new User();
             $user->id = $data[0]['id'];
             $user->name = $data[0]['name'];
+            $user->email = $data[0]['email'];
             $user->birthdate = $data[0]['birthdate'];
             $user->city = $data[0]['city'];
             $user->work = $data[0]['work'];

@@ -152,4 +152,56 @@ class UserHandler {
         ->execute();
     }
 
+    public static function searchUser($term) {
+        $users = [];
+        $data = User::select()->where('name', 'like', "%$term%")->get();
+
+        if($data) {
+            foreach($data as $user) {
+
+                $newUser = new User();
+                $newUser->id = $user['id'];
+                $newUser->name = $user['name'];
+                $newUser->avatar = $user['avatar'];
+
+                $users[] = $newUser;
+            }
+
+        }
+
+        return $users;
+
+    }
+
+    public static function updateUser($updateFields, $idUser) {
+        $user = User::select()->where('id', $idUser)->one();
+
+        if(isset($updateFields['email'])) {
+            User::update()->set('email', $updateFields['email'])->where('id', $idUser)->execute();
+        }
+
+        if(isset($updateFields['password'])) {
+            $hash = password_hash($updateFields['password'], PASSWORD_DEFAULT);
+            User::update()->set('password', $hash)->where('id', $idUser)->execute();
+        }
+
+        if(isset($updateFields['avatar'])) {
+            User::update()->set('avatar', $updateFields['avatar'])->where('id', $idUser)->execute();
+        }
+        if(isset($updateFields['city'])) {
+            User::update()->set('city', $updateFields['city'])->where('id', $idUser)->execute();
+        }
+        if(isset($updateFields['work'])) {
+            User::update()->set('work', $updateFields['work'])->where('id', $idUser)->execute();
+        }
+
+        User::update()->set(
+            'name', $updateFields['name'],
+            'birthdate', $updateFields['birthdate'],
+            'city', $updateFields['city'],
+            'work', $updateFields['work'],
+            )->where('id', $idUser)->execute();
+        
+    }
+
 }
